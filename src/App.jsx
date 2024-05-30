@@ -1,35 +1,56 @@
-import { useGSAP } from '@gsap/react'
-import gsap from 'gsap'
-import React, { useState } from 'react'
-import { useRef } from 'react'
-
-
+import { useGSAP } from '@gsap/react';
+import gsap  from 'gsap';
+import React from 'react';
+import { useState } from 'react';
+import { useRef } from 'react';
 
 const App = () => {
-  const boxRef = useRef(null);
+const jackRef = useRef(null);
+const cockRef = useRef(null);
+const [cockMoveX, setCockMoveX] = useState(0);
+const [cockMoveY, setCockMoveY] = useState(0);
 
-  const[tracker , setTracker] = useState(0);
+const [jackMoveX, setJackMoveX] = useState(0);
+const[jackMoveY, setJackMoveY] = useState(0);
 
-  const btnClicked = ()=>{
 
-    const abc = Math.floor(Math.random()*360)
-    setTracker(abc)
-    console.log("HIEEEEE!");
-  }
-  useGSAP(()=>{
-    gsap.to(boxRef.current, {
-     rotate : tracker,
-     ease: "back",
-     duration: 2,
-     repeat: -1
-  })
-}, [tracker])
-  return (
-    <div className='main'>
-      <button onClick={btnClicked}>Clicked</button>
-      <h1 ref={boxRef} className='box'></h1>
-    </div>
-  )
+const jackmoving =  (e)=>{
+   setJackMoveX(e.clientX)
+   setJackMoveY(e.clientY)
 }
 
-export default App
+
+const cockroachesCaught = (e)=>{
+  const randomX = Math.floor(Math.random()*1500);
+  const randomY = Math.floor(Math.random()*800);
+  setCockMoveX(randomX);
+  setCockMoveY(randomY);
+}
+
+useGSAP(()=>{
+   gsap.to(cockRef.current,{
+    x:cockMoveX,
+    y:cockMoveY,
+    duration: 1,
+    ease: "back",
+   })
+
+   gsap.to(jackRef.current,{
+      x:jackMoveX,
+      y:jackMoveY,
+      duration: 1,
+      ease: "back",
+   })
+},[jackMoveX, jackMoveY, cockMoveX, cockMoveY])
+
+  return (
+    <div className='main' onMouseMove={(e)=>{
+        jackmoving(e)
+    }}>
+      <img className='jack' ref={jackRef} src="src/assets/jack.png" alt="" />
+      <img className='cock' onClick={cockroachesCaught} ref={cockRef} src="src/assets/cock.png" alt="" />
+    </div>
+  );
+}
+
+export default App;
